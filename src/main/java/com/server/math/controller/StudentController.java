@@ -5,9 +5,7 @@ import com.server.math.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class StudentController {
@@ -20,5 +18,13 @@ public class StudentController {
         Student _student = studentService.createStudent(student);
         return new ResponseEntity<>(_student, HttpStatus.CREATED);
     }
+
+    @GetMapping("/student.get")
+    public ResponseEntity<?> getStudentByTelegramId(@RequestParam("telegramId") Long telegramId) {
+        Student student = studentService.getStudentByTelegramId(telegramId);
+        return new ResponseEntity<>(student, HttpStatus.OK);
+    }
+
+
 
 }

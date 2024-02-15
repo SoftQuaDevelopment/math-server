@@ -1,18 +1,13 @@
 package com.server.math.controller;
 
-import com.server.math.dto.ObjectMessageResponse;
-import com.server.math.model.Student;
+import com.server.math.dto.Subject;
 import com.server.math.model.StudentAnswers;
-import com.server.math.model.questions.Answer;
 import com.server.math.model.questions.Task;
 import com.server.math.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,9 +24,9 @@ public class TaskController {
     }
 
     @PostMapping("/task.assignToStudent")
-    private ResponseEntity<?> assignTaskStudent(@RequestParam(name = "studentId") Long studentId,
+    private ResponseEntity<?> assignTaskStudent(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
                                                  @RequestParam(name = "taskId") Long taskId) {
-        StudentAnswers studentAnswers = taskService.assignTasksStudent(studentId, taskId);
+        StudentAnswers studentAnswers = taskService.assignTasksStudent(studentTelegramId, taskId);
         return new ResponseEntity<>(studentAnswers, HttpStatus.CREATED);
     }
 
@@ -44,5 +39,26 @@ public class TaskController {
         return new ResponseEntity<>("" + id, HttpStatus.CREATED);
     }
 
+    @GetMapping("/task.get")
+    private ResponseEntity<?> getTaskById(@RequestParam(name = "taskId") Long taskId) {
+        Task task = taskService.getTaskById(taskId);
+        return new ResponseEntity<>(task, HttpStatus.OK);
+    }
+
+    @GetMapping("/task.getByClassAndDate")
+    private ResponseEntity<?> getAllTaskByClassAndDate(@RequestParam(name = "classNumber") int classNumber,
+                                                       @RequestParam(name = "day") int day) {
+        List<Task> tasks = taskService.getAllTaskByClassAndDate(classNumber, day);
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
+    }
+
+    @GetMapping("/task.getByClassAndDateAndDifficultyAndSubject")
+    private ResponseEntity<?> getAllTaskByClassAndDateAndDifficultyAndSubject(@RequestParam(name = "classNumber") int classNumber,
+                                                                              @RequestParam(name = "day") int day,
+                                                                              @RequestParam(name = "difficultyLevel") int difficultyLevel,
+                                                                              @RequestParam(name = "subject") Subject subject) {
+        List<Task> tasks = taskService.getAllTaskByClassAndDateAndDifficultyAndSubject(classNumber, day, difficultyLevel, subject);
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
+    }
 
 }

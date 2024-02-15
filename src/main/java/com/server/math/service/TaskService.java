@@ -42,11 +42,11 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public StudentAnswers assignTasksStudent(Long studentId, Long taskId) {
+    public StudentAnswers assignTasksStudent(Long studentTelegramId, Long taskId) {
         StudentAnswers studentAnswers = new StudentAnswers();
 
         Student student = studentRepository
-                .findById(studentId)
+                .findByTelegramId(studentTelegramId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Student not found!")
                 );
@@ -62,18 +62,22 @@ public class TaskService {
 
     public int setStudentAnswer(Long answerId, int points, Long studentTelegramId, Long taskId) {
 
-        Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new ResourceNotFoundException("Answer Not Found!"));
-        Student student = studentRepository.findByTelegramId(studentTelegramId).orElseThrow(() -> new ResourceNotFoundException("Student Not Found!"));
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task not found!"));
+        Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new ResourceNotFoundException("Answer does not exist!"));
+        Student student = studentRepository.findByTelegramId(studentTelegramId).orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
 
         return studentAnswersRepository.updateAnswerAndPointsByStudentAndTask(answer, points, student, task);
     }
 
-    public List<Task> getAllTaskByClassAndDate(byte classNumber, byte date) {
+    public Task getTaskById(Long id) {
+        return taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
+    }
+
+    public List<Task> getAllTaskByClassAndDate(int classNumber, int date) {
         return taskRepository.findByClassNumberAndDay(classNumber, date);
     }
 
-    public List<Task> getAllTaskByClassAndDateAndDifficultyAndSubject(byte classNumber, byte day, byte difficultyLevel, Subject subject) {
+    public List<Task> getAllTaskByClassAndDateAndDifficultyAndSubject(int classNumber, int day, int difficultyLevel, Subject subject) {
         return taskRepository.findByClassNumberAndDayAndDifficultyLevelAndSubject(classNumber, day, difficultyLevel, subject);
     }
 

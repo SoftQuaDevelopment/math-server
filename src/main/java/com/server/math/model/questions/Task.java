@@ -16,19 +16,22 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private byte classNumber;
+    private Integer classNumber;
 
-    private byte day;
+    private Integer day;
+
+    private boolean isQuiz;
 
     @Enumerated(EnumType.STRING)
     private Subject subject;
 
-    private byte difficultyLevel;
+    private Integer difficultyLevel;
 
     @Enumerated(EnumType.STRING)
     private TaskType type;
@@ -36,7 +39,6 @@ public class Task {
     private String text;
 
     private String content;
-
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
