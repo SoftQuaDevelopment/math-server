@@ -1,5 +1,6 @@
 package com.server.math.controller;
 
+import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.StudentAnswers;
 import com.server.math.service.StudentAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,8 @@ public class StudentAnswerController {
     private ResponseEntity<?> getStudentTaskOrQuizCount(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
                                                         @RequestParam(name = "isQuiz") boolean isQuiz) {
         long count = isQuiz ? studentAnswerService.getQuizCount(studentTelegramId) : studentAnswerService.getTaskCount(studentTelegramId);
-        return new ResponseEntity<>(count, HttpStatus.OK);
+        ObjectMessageResponse<Long> countMessage = new ObjectMessageResponse<>("Count calculate!", count);
+        return new ResponseEntity<>(countMessage, HttpStatus.OK);
     }
 
 }
