@@ -6,6 +6,8 @@ import com.server.math.utils.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StudentService {
 
@@ -20,7 +22,8 @@ public class StudentService {
         return studentRepository.findByTelegramId(telegramId).orElseThrow(() -> new ResourceNotFoundException("User Not Found!"));
     }
 
-
-
+    public List<Student> getAllStudentsByClassNumber(int classNumber) {
+        return studentRepository.findByClassNumber(classNumber);
+    }
 
 }

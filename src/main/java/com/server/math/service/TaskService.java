@@ -23,14 +23,6 @@ public class TaskService {
     @Autowired
     TaskRepository taskRepository;
 
-    @Autowired
-    StudentRepository studentRepository;
-
-    @Autowired
-    StudentAnswersRepository studentAnswersRepository;
-    @Autowired
-    private AnswerRepository answerRepository;
-
     public Task createTask(Task task) {
         Set<Answer> answerSet = task.getAnswers();
         if (!answerSet.isEmpty()) {
@@ -40,33 +32,6 @@ public class TaskService {
         }
 
         return taskRepository.save(task);
-    }
-
-    public StudentAnswers assignTasksStudent(Long studentTelegramId, Long taskId) {
-        StudentAnswers studentAnswers = new StudentAnswers();
-
-        Student student = studentRepository
-                .findByTelegramId(studentTelegramId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Student not found!")
-                );
-        studentAnswers.setStudent(student);
-        studentAnswers.setAnswer(null);
-        studentAnswers.setPoints(0);
-
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task id not found!"));
-        studentAnswers.setTask(task);
-
-        return studentAnswersRepository.save(studentAnswers);
-    }
-
-    public int setStudentAnswer(Long answerId, int points, Long studentTelegramId, Long taskId) {
-
-        Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new ResourceNotFoundException("Answer does not exist!"));
-        Student student = studentRepository.findByTelegramId(studentTelegramId).orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
-
-        return studentAnswersRepository.updateAnswerAndPointsByStudentAndTask(answer, points, student, task);
     }
 
     public Task getTaskById(Long id) {

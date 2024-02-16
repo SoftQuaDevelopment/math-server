@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class StudentController {
 
@@ -20,11 +22,15 @@ public class StudentController {
     }
 
     @GetMapping("/student.get")
-    public ResponseEntity<?> getStudentByTelegramId(@RequestParam("telegramId") Long telegramId) {
+    public ResponseEntity<?> getStudentByTelegramId(@RequestParam(name = "telegramId") Long telegramId) {
         Student student = studentService.getStudentByTelegramId(telegramId);
         return new ResponseEntity<>(student, HttpStatus.OK);
     }
 
-
+    @GetMapping("/student.getAllByClassNumber")
+    public ResponseEntity<?> getAllStudentsByClassNumber(@RequestParam(name = "classNumber") int classNumber) {
+        List<Student> students = studentService.getAllStudentsByClassNumber(classNumber);
+        return new ResponseEntity<>(students, HttpStatus.OK);
+    }
 
 }

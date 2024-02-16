@@ -23,22 +23,6 @@ public class TaskController {
         return new ResponseEntity<>(_task, HttpStatus.CREATED);
     }
 
-    @PostMapping("/task.assignToStudent")
-    private ResponseEntity<?> assignTaskStudent(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
-                                                 @RequestParam(name = "taskId") Long taskId) {
-        StudentAnswers studentAnswers = taskService.assignTasksStudent(studentTelegramId, taskId);
-        return new ResponseEntity<>(studentAnswers, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/task.setStudentAnswer")
-    private ResponseEntity<?> setStudentAnswer(@RequestParam(name = "answerId") Long answerId,
-                                               @RequestParam(name = "points") int points,
-                                               @RequestParam(name = "studentTelegramId") Long studentTelegramId,
-                                               @RequestParam(name = "taskId") Long taskId) {
-        int id = taskService.setStudentAnswer(answerId, points, studentTelegramId, taskId);
-        return new ResponseEntity<>("" + id, HttpStatus.CREATED);
-    }
-
     @GetMapping("/task.get")
     private ResponseEntity<?> getTaskById(@RequestParam(name = "taskId") Long taskId) {
         Task task = taskService.getTaskById(taskId);
