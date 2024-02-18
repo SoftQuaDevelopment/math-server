@@ -1,6 +1,7 @@
 package com.server.math.model;
 
 import com.server.math.model.questions.Answer;
+import com.server.math.model.questions.CustomStudentAnswer;
 import com.server.math.model.questions.Task;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,17 +17,21 @@ public class StudentAnswers {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "task_id")
     private Task task;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "answer_id")
     private Answer answer;
+
+    @ManyToOne
+    @JoinColumn(name = "custom_student_answer_id")
+    private CustomStudentAnswer customStudentAnswer;
 
     private int points;
 

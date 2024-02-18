@@ -1,15 +1,13 @@
 package com.server.math.controller;
 
 import com.server.math.dto.ObjectMessageResponse;
+import com.server.math.model.questions.CustomStudentAnswer;
 import com.server.math.model.StudentAnswers;
 import com.server.math.service.StudentAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,13 +24,29 @@ public class StudentAnswerController {
         return new ResponseEntity<>(studentAnswers, HttpStatus.CREATED);
     }
 
-    @PostMapping("/answer.setStudentAnswer")
-    private ResponseEntity<?> setStudentAnswer(@RequestParam(name = "answerId") Long answerId,
-                                               @RequestParam(name = "points") int points,
-                                               @RequestParam(name = "studentTelegramId") Long studentTelegramId,
-                                               @RequestParam(name = "taskId") Long taskId) {
-        int id = studentAnswerService.setStudentAnswer(answerId, points, studentTelegramId, taskId);
-        return new ResponseEntity<>("" + id, HttpStatus.CREATED);
+    @PostMapping("/answer.assignToStudentsByClassNumber")
+    private ResponseEntity<?> assignTasksToAllStudentsInClassNumber(@RequestParam(name = "taskId") Long taskId,
+                                                                    @RequestParam(name =  "classNumber") int classNumber) {
+        List<StudentAnswers> studentAnswersList = studentAnswerService.assignTasksToAllStudentsInClassNumber(taskId, classNumber);
+        return new ResponseEntity<>(studentAnswersList, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/answer.setStudentEasyAnswer")
+    private ResponseEntity<?> setStudentEasyAnswer(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
+                                                   @RequestParam(name = "taskId") Long taskId,
+                                                   @RequestParam(name = "studentAnswerId") Long answerId) {
+        int id = studentAnswerService.setStudentEasyAnswer(answerId, studentTelegramId, taskId);
+        ObjectMessageResponse<Integer> messageResponse = new ObjectMessageResponse<>("Student saved the answer to an easy task", id);
+        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/answer.setStudentCustomAnswer")
+    private ResponseEntity<?> setStudentCustomAnswer(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
+                                                     @RequestParam(name = "taskId") Long taskId,
+                                                     @RequestParam(name = "CustomStudentAnswer") String customStudentAnswer) {
+        int id = studentAnswerService.setStudentCustomAnswer(studentTelegramId, taskId, customStudentAnswer);
+        ObjectMessageResponse<Integer> messageResponse = new ObjectMessageResponse<>("Student saved custom answer", id);
+        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
 
     @GetMapping("/answer.getStudentAnswersByTelegramId")
