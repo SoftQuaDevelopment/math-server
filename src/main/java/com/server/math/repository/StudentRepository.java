@@ -10,4 +10,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findByTelegramId(Long telegramId);
 
     List<Student> findByClassNumber(Integer classNumber);
+
+    List<Student> findByClassNumberAndClassLetter(Integer classNumber, String classLetter);
 }

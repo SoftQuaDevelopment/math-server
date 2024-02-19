@@ -1,10 +1,13 @@
 package com.server.math.repository;
 
+import com.server.math.dto.Subject;
 import com.server.math.model.questions.CustomStudentAnswer;
 import com.server.math.model.Student;
 import com.server.math.model.StudentAnswers;
 import com.server.math.model.questions.Answer;
 import com.server.math.model.questions.Task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +33,13 @@ public interface StudentAnswersRepository extends JpaRepository<StudentAnswers, 
     long countByTask_IsQuizFalseAndStudent_TelegramId(Long telegramId);
 
     long countByTask_IsQuizTrueAndStudent_TelegramId(Long telegramId);
+
+
+    List<StudentAnswers> findByStudent_ClassNumberAndStudent_ClassLetterAndTask_IsQuizFalseAndTask_Subject(Integer classNumber, String classLetter, Subject subject);
+
+    List<StudentAnswers> findByStudent_ClassNumberAndStudent_ClassLetterAndTask_IsQuizFalse(Integer classNumber, String classLetter);
+
+    List<StudentAnswers> findByStudent_ClassNumberAndTask_IsQuizFalse(Integer classNumber);
+
+    List<StudentAnswers> findByStudent_ClassNumberAndTask_IsQuizFalseAndTask_Subject(Integer classNumber, Subject subject);
 }

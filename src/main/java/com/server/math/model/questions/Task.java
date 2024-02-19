@@ -49,7 +49,7 @@ public class Task {
 
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
-        answer.getQuestions().add(this);
+        answer.getTasks().add(this);
     }
 
 }
