@@ -24,5 +24,5 @@ public class Student {
     private Long telegramId;
     private Integer classNumber;
     private String classLetter;
-
+    private boolean isBan;
 }

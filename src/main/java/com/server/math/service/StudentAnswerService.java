@@ -83,7 +83,6 @@ public class StudentAnswerService {
         Student student = studentRepository.findByTelegramId(studentTelegramId).orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
 
-        // todo: БАГ пофикшен c назначение очков пользователей
         Set<Answer> correctAnswers = task.getAnswers();
         int points = correctAnswers.stream()
                 .filter(answer -> Objects.equals(answer.getId(), studentAnswer.getId()))

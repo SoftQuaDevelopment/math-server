@@ -1,5 +1,6 @@
 package com.server.math.controller;
 
+import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.Student;
 import com.server.math.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,14 @@ public class StudentController {
 
     @PostMapping("/student.create")
     public ResponseEntity<?> createStudent(@RequestBody Student student) {
-        Student _student = studentService.createStudent(student);
-        return new ResponseEntity<>(_student, HttpStatus.CREATED);
+        return studentService.createStudent(student);
+    }
+
+    @PostMapping("/student.ban")
+    public ResponseEntity<?> setBanStudent(@RequestParam(name = "telegramId") Long telegramId,
+                                           @RequestParam(name = "isBan") boolean isBan) {
+        ObjectMessageResponse<?> objectMessageResponse = studentService.setBanStudent(telegramId, isBan);
+        return new ResponseEntity<>(objectMessageResponse, HttpStatus.OK);
     }
 
     @GetMapping("/student.get")
@@ -31,6 +38,12 @@ public class StudentController {
     public ResponseEntity<?> getAllStudentsByClassNumber(@RequestParam(name = "classNumber") int classNumber) {
         List<Student> students = studentService.getAllStudentsByClassNumber(classNumber);
         return new ResponseEntity<>(students, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/student.deleteByTelegramId")
+    public ResponseEntity<?> deleteUser(@RequestParam(name = "telegramId") Long telegramId) {
+        Student student = studentService.deleteUser(telegramId);
+        return new ResponseEntity<>(student, HttpStatus.OK);
     }
 
 }

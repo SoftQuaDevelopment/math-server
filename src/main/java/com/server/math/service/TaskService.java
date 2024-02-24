@@ -1,14 +1,8 @@
 package com.server.math.service;
 
-import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.dto.Subject;
-import com.server.math.model.Student;
-import com.server.math.model.StudentAnswers;
 import com.server.math.model.questions.Answer;
 import com.server.math.model.questions.Task;
-import com.server.math.repository.AnswerRepository;
-import com.server.math.repository.StudentAnswersRepository;
-import com.server.math.repository.StudentRepository;
 import com.server.math.repository.TaskRepository;
 import com.server.math.utils.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

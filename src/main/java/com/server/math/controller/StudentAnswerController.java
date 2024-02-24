@@ -1,7 +1,6 @@
 package com.server.math.controller;
 
 import com.server.math.dto.ObjectMessageResponse;
-import com.server.math.model.questions.CustomStudentAnswer;
 import com.server.math.model.StudentAnswers;
 import com.server.math.service.StudentAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
