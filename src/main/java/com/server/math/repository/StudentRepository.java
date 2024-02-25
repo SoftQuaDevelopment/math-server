@@ -25,6 +25,4 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     boolean existsByTelegramId(Long telegramId);
 
-    @Transactional
-    List<Student> deleteByTelegramId(Long telegramId);
 }

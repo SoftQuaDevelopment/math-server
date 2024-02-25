@@ -31,6 +31,8 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Subject subject;
 
+    private String topic;
+
     private Integer difficultyLevel;
 
     @Enumerated(EnumType.STRING)

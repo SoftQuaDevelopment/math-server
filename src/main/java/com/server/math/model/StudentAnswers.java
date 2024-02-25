@@ -17,7 +17,7 @@ public class StudentAnswers {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.REMOVE)
     @JoinColumn(name = "student_id")
     private Student student;
 

@@ -1,5 +1,6 @@
 package com.server.math.controller;
 
+import com.server.math.dto.CountAssignedTasks;
 import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.StudentAnswers;
 import com.server.math.service.StudentAnswerService;
@@ -27,15 +28,16 @@ public class StudentAnswerController {
     private ResponseEntity<?> assignTasksToAllStudentsInClassNumber(@RequestParam(name = "taskId") Long taskId,
                                                                     @RequestParam(name =  "classNumber") int classNumber) {
         List<StudentAnswers> studentAnswersList = studentAnswerService.assignTasksToAllStudentsInClassNumber(taskId, classNumber);
-        return new ResponseEntity<>(studentAnswersList, HttpStatus.CREATED);
+        int countAssignedAnswers = studentAnswersList.size();
+        CountAssignedTasks<List<StudentAnswers>> assignedTasks = new CountAssignedTasks<>(countAssignedAnswers, studentAnswersList);
+        return new ResponseEntity<>(assignedTasks, HttpStatus.CREATED);
     }
 
     @PostMapping("/answer.setStudentEasyAnswer")
     private ResponseEntity<?> setStudentEasyAnswer(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
                                                    @RequestParam(name = "taskId") Long taskId,
                                                    @RequestParam(name = "studentAnswerId") Long answerId) {
-        int id = studentAnswerService.setStudentEasyAnswer(answerId, studentTelegramId, taskId);
-        ObjectMessageResponse<Integer> messageResponse = new ObjectMessageResponse<>("Student saved the answer to an easy task", id);
+        ObjectMessageResponse<?> messageResponse = studentAnswerService.setStudentEasyAnswer(answerId, studentTelegramId, taskId);
         return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
 
@@ -43,8 +45,7 @@ public class StudentAnswerController {
     private ResponseEntity<?> setStudentCustomAnswer(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
                                                      @RequestParam(name = "taskId") Long taskId,
                                                      @RequestParam(name = "CustomStudentAnswer") String customStudentAnswer) {
-        int id = studentAnswerService.setStudentCustomAnswer(studentTelegramId, taskId, customStudentAnswer);
-        ObjectMessageResponse<Integer> messageResponse = new ObjectMessageResponse<>("Student saved custom answer", id);
+        ObjectMessageResponse<?> messageResponse = studentAnswerService.setStudentCustomAnswer(studentTelegramId, taskId, customStudentAnswer);
         return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
 

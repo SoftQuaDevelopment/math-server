@@ -2,6 +2,8 @@ package com.server.math.service;
 
 import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.Student;
+import com.server.math.repository.CustomStudentAnswerRepository;
+import com.server.math.repository.StudentAnswersRepository;
 import com.server.math.repository.StudentRepository;
 import com.server.math.utils.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,12 @@ import java.util.List;
 @Service
 public class StudentService {
 
-
     @Autowired
     StudentRepository studentRepository;
+    @Autowired
+    StudentAnswersRepository studentAnswersRepository;
+    @Autowired
+    CustomStudentAnswerRepository customStudentAnswerRepository;
 
     public ResponseEntity<?> createStudent(Student student) {
         String name = student.getName();
@@ -73,12 +78,19 @@ public class StudentService {
         return studentRepository.findByClassNumber(classNumber);
     }
 
-    public Student deleteUser(Long telegramId) {
-        studentRepository.findByTelegramId(telegramId)
+    public ResponseEntity<?> deleteUser(Long telegramId) {
+        Student student = studentRepository.findByTelegramId(telegramId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not Found!"));
 
-        List<Student> students = studentRepository.deleteByTelegramId(telegramId);
-        return students.get(0);
+        if (!student.isBan()) {
+            ObjectMessageResponse<String> objectMessageResponse = new ObjectMessageResponse<>("Only banned students can be deleted", "Ban status: false");
+            return new ResponseEntity<>(objectMessageResponse, HttpStatus.BAD_REQUEST);
+        }
+        studentAnswersRepository.deleteByStudent(student);
+        customStudentAnswerRepository.deleteByStudent(student);
+        studentRepository.delete(student);
+
+        return new ResponseEntity<>(student, HttpStatus.OK);
     }
 
 }

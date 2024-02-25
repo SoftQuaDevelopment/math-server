@@ -1,5 +1,6 @@
 package com.server.math;
 
+import com.server.math.model.Student;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

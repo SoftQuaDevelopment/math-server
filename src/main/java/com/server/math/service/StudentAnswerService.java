@@ -1,5 +1,6 @@
 package com.server.math.service;
 
+import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.Student;
 import com.server.math.model.StudentAnswers;
 import com.server.math.model.questions.Answer;
@@ -54,14 +55,18 @@ public class StudentAnswerService {
         studentAnswers.setCustomStudentAnswer(null);
         studentAnswers.setPoints(0);
 
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task id not found!"));
+        Task task = taskRepository
+                .findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task id not found!"));
         studentAnswers.setTask(task);
 
         return studentAnswersRepository.save(studentAnswers);
     }
 
     public List<StudentAnswers> assignTasksToAllStudentsInClassNumber(Long taskId, int classNumber) {
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task id not found!"));
+        Task task = taskRepository
+                .findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task id not found!"));
         List<Student> studentList = studentRepository.findByClassNumber(classNumber);
 
         List<StudentAnswers> studentAnswersList = studentList.stream()
@@ -78,9 +83,15 @@ public class StudentAnswerService {
         return studentAnswersRepository.saveAll(studentAnswersList);
     }
 
-    public int setStudentEasyAnswer(Long studentAnswerId, Long studentTelegramId, Long taskId) {
+    public ObjectMessageResponse<?> setStudentEasyAnswer(Long studentAnswerId, Long studentTelegramId, Long taskId) {
+        Student student = studentRepository
+                .findByTelegramId(studentTelegramId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
+
+        if(student.isBan())
+            return new ObjectMessageResponse<>("A banned student cannot answer questions", "Student is banned");
+
         Answer studentAnswer = answerRepository.findById(studentAnswerId).orElseThrow(() -> new ResourceNotFoundException("Answer does not exist!"));
-        Student student = studentRepository.findByTelegramId(studentTelegramId).orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
 
         Set<Answer> correctAnswers = task.getAnswers();
@@ -91,12 +102,21 @@ public class StudentAnswerService {
                 .findFirst()
                 .orElse(0);
 
-        return studentAnswersRepository.updateAnswerAndPointsByStudentAndTask(studentAnswer, points, student, task);
+        int updateCount = studentAnswersRepository.updateAnswerAndPointsByStudentAndTask(studentAnswer, points, student, task);
+        return new ObjectMessageResponse<>("Update completed", updateCount);
     }
 
-    public int setStudentCustomAnswer(Long studentTelegramId, Long taskId, String studentAnswer) {
-        Student student = studentRepository.findByTelegramId(studentTelegramId).orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
+    public ObjectMessageResponse<?> setStudentCustomAnswer(Long studentTelegramId, Long taskId, String studentAnswer) {
+        Student student = studentRepository
+                .findByTelegramId(studentTelegramId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
+
+        if(student.isBan())
+            return new ObjectMessageResponse<>("A banned student cannot answer questions", "Student is banned");
+
+        Task task = taskRepository
+                .findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
 
         CustomStudentAnswer customAnswer = getCustomStudentAnswer(studentAnswer, task, student);
         int points = 0;
@@ -106,7 +126,8 @@ public class StudentAnswerService {
 
         CustomStudentAnswer _answer = customStudentAnswerRepository.save(customAnswer);
 
-        return studentAnswersRepository.updateCustomStudentAnswerAndPointsByStudentAndTask(_answer, points, student, task);
+        int updateCount = studentAnswersRepository.updateCustomStudentAnswerAndPointsByStudentAndTask(_answer, points, student, task);
+        return new ObjectMessageResponse<>("Update completed", updateCount);
     }
 
     private static CustomStudentAnswer getCustomStudentAnswer(String studentAnswer, Task task, Student student) {
@@ -118,12 +139,12 @@ public class StudentAnswerService {
         System.out.println(correctAnswer);
         assert correctAnswer != null;
 
-        CustomStudentAnswer _customAnswer = new CustomStudentAnswer();
-        _customAnswer.setStudentAnswerText(studentAnswer);
-        _customAnswer.setCorrect(Objects.equals(correctAnswer.getText(), studentAnswer));
-        _customAnswer.setTask(task);
-        _customAnswer.setStudent(student);
-        return _customAnswer;
+        CustomStudentAnswer customAnswer = new CustomStudentAnswer();
+        customAnswer.setStudentAnswerText(studentAnswer);
+        customAnswer.setCorrect(Objects.equals(correctAnswer.getText(), studentAnswer));
+        customAnswer.setTask(task);
+        customAnswer.setStudent(student);
+        return customAnswer;
     }
 
     private static int getPoints(Task task) {
@@ -142,6 +163,5 @@ public class StudentAnswerService {
         }
         return points;
     }
-
 
 }

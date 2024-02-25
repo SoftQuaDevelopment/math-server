@@ -40,4 +40,9 @@ public interface StudentAnswersRepository extends JpaRepository<StudentAnswers, 
     List<StudentAnswers> findByStudent_ClassNumberAndTask_IsQuizFalse(Integer classNumber);
 
     List<StudentAnswers> findByStudent_ClassNumberAndTask_IsQuizFalseAndTask_Subject(Integer classNumber, Subject subject);
+
+    @Transactional
+    @Modifying
+    @Query("delete from StudentAnswers s where s.student = ?1")
+    int deleteByStudent(Student student);
 }

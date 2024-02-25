@@ -1,6 +1,6 @@
-package com.server.math.dto;
+package com.server.math.dto.result_table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.server.math.dto.Subject;
 import com.server.math.model.Student;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +11,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class LeadBoard {
+public class ResultTable {
+
 
     Student student;
+    Subject subject;
     int points;
+    int mark;
 
 }
