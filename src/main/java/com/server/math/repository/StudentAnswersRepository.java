@@ -45,4 +45,6 @@ public interface StudentAnswersRepository extends JpaRepository<StudentAnswers, 
     @Modifying
     @Query("delete from StudentAnswers s where s.student = ?1")
     int deleteByStudent(Student student);
+
+    List<StudentAnswers> findByStudent_TelegramIdAndTask_Subject(Long telegramId, Subject subject);
 }

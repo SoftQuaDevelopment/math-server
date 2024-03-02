@@ -1,7 +1,9 @@
 package com.server.math.service;
 
 import com.server.math.dto.ObjectMessageResponse;
+import com.server.math.dto.Subject;
 import com.server.math.model.Student;
+import com.server.math.model.StudentAnswers;
 import com.server.math.repository.CustomStudentAnswerRepository;
 import com.server.math.repository.StudentAnswersRepository;
 import com.server.math.repository.StudentRepository;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class StudentService {
@@ -67,6 +70,25 @@ public class StudentService {
         boolean isBan = student.isBan();
 
         return new ObjectMessageResponse<>("Student ban status: ", isBan);
+    }
+
+    public int getStudentPointsBySubject(Long telegramId, Subject subject) {
+        List<StudentAnswers> studentAnswers = studentAnswersRepository
+                .findByStudent_TelegramIdAndTask_Subject(telegramId, subject);
+
+        return studentAnswers.stream()
+                .filter(studentAnswer -> Objects.equals(studentAnswer.getStudent().getId(), telegramId))
+                .mapToInt(StudentAnswers::getPoints)
+                .sum();
+    }
+
+    public int getStudentPoints(Long telegramId) {
+        List<StudentAnswers> studentAnswers = studentAnswersRepository.findByStudent_TelegramId(telegramId);
+
+        return studentAnswers.stream()
+                .filter( studentAnswer -> Objects.equals(studentAnswer.getStudent().getId(), telegramId))
+                .mapToInt(StudentAnswers::getPoints)
+                .sum();
     }
 
 

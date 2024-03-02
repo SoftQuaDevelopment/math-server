@@ -1,6 +1,7 @@
 package com.server.math.controller;
 
 import com.server.math.dto.ObjectMessageResponse;
+import com.server.math.dto.Subject;
 import com.server.math.model.Student;
 import com.server.math.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,6 +59,21 @@ public class StudentController {
         Student student = studentService.getStudentByTelegramId(telegramId);
         return new ResponseEntity<>(student, HttpStatus.OK);
     }
+
+    @GetMapping("/student.getPointsBySubject")
+    public ResponseEntity<?> getStudentPointsBySubject(@RequestParam(name = "telegramId") Long telegramId,
+                                                       @RequestParam(name = "subject")Subject subject) {
+        int points = studentService.getStudentPointsBySubject(telegramId, subject);
+        ObjectMessageResponse<Integer> pointsMessage = new ObjectMessageResponse<>("points student", points );
+        return new ResponseEntity<>(pointsMessage, HttpStatus.OK);
+    }
+    @GetMapping("/student.getPoints")
+    public ResponseEntity<?> getStudentPoints(@RequestParam(name = "telegramId") Long telegramId) {
+        int points = studentService.getStudentPoints(telegramId);
+        ObjectMessageResponse<Integer> pointsMessage = new ObjectMessageResponse<>("points student", points );
+        return new ResponseEntity<>(pointsMessage, HttpStatus.OK);
+    }
+
     @Operation(
             summary = "Get all users in classNumber",
             description = "Obtaining a list of students from the entire parallel class")
