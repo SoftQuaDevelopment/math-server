@@ -1,5 +1,6 @@
 package com.server.math.controller;
 
+import com.server.math.dto.AssignedStudentTask;
 import com.server.math.dto.CountAssignedTasks;
 import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.StudentAnswers;
@@ -33,12 +34,11 @@ public class StudentAnswerController {
         return new ResponseEntity<>(assignedTasks, HttpStatus.CREATED);
     }
 
-    @PostMapping("/answer.setStudentEasyAnswer")
-    private ResponseEntity<?> setStudentEasyAnswer(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
-                                                   @RequestParam(name = "taskId") Long taskId,
-                                                   @RequestParam(name = "studentAnswerId") Long answerId) {
-        ObjectMessageResponse<?> messageResponse = studentAnswerService.setStudentEasyAnswer(answerId, studentTelegramId, taskId);
-        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
+    @PostMapping("/answer.isTaskAssigned")
+    private ResponseEntity<?> isTaskAssigned(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
+                                             @RequestParam(name = "taskId") Long taskId) {
+        AssignedStudentTask assignedStudentTask = studentAnswerService.isTaskAssigned(studentTelegramId, taskId);
+        return new ResponseEntity<>(assignedStudentTask, HttpStatus.OK);
     }
 
     @PostMapping("/answer.setStudentCustomAnswer")

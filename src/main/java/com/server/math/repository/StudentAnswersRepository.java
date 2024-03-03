@@ -47,4 +47,10 @@ public interface StudentAnswersRepository extends JpaRepository<StudentAnswers, 
     int deleteByStudent(Student student);
 
     List<StudentAnswers> findByStudent_TelegramIdAndTask_Subject(Long telegramId, Subject subject);
+
+    @Query("select (count(s) > 0) from StudentAnswers s where s.student.id = ?1 and s.task.id = ?2")
+    boolean existsByStudent_IdAndTask_Id(Long id, Long id1);
+
+    @Query("select s from StudentAnswers s where s.student.id = ?1 and s.task.id = ?2")
+    StudentAnswers findByStudent_IdAndTask_Id(Long id, Long id1);
 }

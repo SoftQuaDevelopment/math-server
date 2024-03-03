@@ -1,5 +1,6 @@
 package com.server.math.service;
 
+import com.server.math.dto.AssignedStudentTask;
 import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.Student;
 import com.server.math.model.StudentAnswers;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,29 +83,6 @@ public class StudentAnswerService {
         return studentAnswersRepository.saveAll(studentAnswersList);
     }
 
-    public ObjectMessageResponse<?> setStudentEasyAnswer(Long studentAnswerId, Long studentTelegramId, Long taskId) {
-        Student student = studentRepository
-                .findByTelegramId(studentTelegramId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
-
-        if(student.isBan())
-            return new ObjectMessageResponse<>("A banned student cannot answer questions", "Student is banned");
-
-        Answer studentAnswer = answerRepository.findById(studentAnswerId).orElseThrow(() -> new ResourceNotFoundException("Answer does not exist!"));
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
-
-        Set<Answer> correctAnswers = task.getAnswers();
-        int points = correctAnswers.stream()
-                .filter(answer -> Objects.equals(answer.getId(), studentAnswer.getId()))
-                .filter(answer -> studentAnswer.getIsCorrect())
-                .mapToInt(answer -> getPoints(task))
-                .findFirst()
-                .orElse(0);
-
-        int updateCount = studentAnswersRepository.updateAnswerAndPointsByStudentAndTask(studentAnswer, points, student, task);
-        return new ObjectMessageResponse<>("Update completed", updateCount);
-    }
-
     public ObjectMessageResponse<?> setStudentCustomAnswer(Long studentTelegramId, Long taskId, String studentAnswer) {
         Student student = studentRepository
                 .findByTelegramId(studentTelegramId)
@@ -145,6 +122,15 @@ public class StudentAnswerService {
         customAnswer.setTask(task);
         customAnswer.setStudent(student);
         return customAnswer;
+    }
+
+    public AssignedStudentTask isTaskAssigned(Long studentTelegramId, Long taskId) {
+        StudentAnswers studentAnswers = studentAnswersRepository.findByStudent_IdAndTask_Id(studentTelegramId, taskId);
+        Task task = null;
+        if(studentAnswers != null) task = studentAnswers.getTask();
+        boolean isAssigned = studentAnswers != null;
+
+        return new AssignedStudentTask(isAssigned, task);
     }
 
     private static int getPoints(Task task) {
