@@ -127,8 +127,11 @@ public class StudentAnswerService {
     public AssignedStudentTask isTaskAssigned(Long studentTelegramId, Long taskId) {
         StudentAnswers studentAnswers = studentAnswersRepository.findByStudent_IdAndTask_Id(studentTelegramId, taskId);
         Task task = null;
-        if(studentAnswers != null) task = studentAnswers.getTask();
-        boolean isAssigned = studentAnswers != null;
+        boolean isAssigned = false;
+        if(studentAnswers != null) {
+            task = studentAnswers.getTask();
+            isAssigned = true;
+        }
 
         return new AssignedStudentTask(isAssigned, task);
     }

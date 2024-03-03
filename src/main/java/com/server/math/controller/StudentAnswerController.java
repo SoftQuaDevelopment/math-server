@@ -34,7 +34,7 @@ public class StudentAnswerController {
         return new ResponseEntity<>(assignedTasks, HttpStatus.CREATED);
     }
 
-    @PostMapping("/answer.isTaskAssigned")
+    @GetMapping("/answer.isTaskAssigned")
     private ResponseEntity<?> isTaskAssigned(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
                                              @RequestParam(name = "taskId") Long taskId) {
         AssignedStudentTask assignedStudentTask = studentAnswerService.isTaskAssigned(studentTelegramId, taskId);
