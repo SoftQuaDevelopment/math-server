@@ -18,6 +18,8 @@ public class CustomStudentAnswer {
     @Column(name = "id", nullable = false)
     private Long id;
 
+
+    @Column(length = 1000)
     private String studentAnswerText;
 
     private boolean isCorrect;

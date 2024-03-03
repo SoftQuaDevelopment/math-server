@@ -38,8 +38,11 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskType type;
 
+    @Column(length = 5000)
     private String text;
 
+
+    @Column(length = 5000)
     private String content;
 
     @ManyToMany(fetch = FetchType.LAZY,

@@ -21,7 +21,7 @@ public class Answer {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "text")
+    @Column(name = "text", length = 5000)
     private String text;
 
     @Column(name = "is_correct")

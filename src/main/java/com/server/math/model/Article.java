@@ -25,6 +25,8 @@ public class Article {
     @Enumerated(EnumType.STRING)
     private Subject subject;
 
+
+    @Column(length = 7000)
     private String text;
 
 }
