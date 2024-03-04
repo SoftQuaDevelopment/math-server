@@ -1,6 +1,7 @@
 package com.server.math.service;
 
 import com.server.math.dto.AssignedStudentTask;
+import com.server.math.dto.IsStudentAnswered;
 import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.Student;
 import com.server.math.model.StudentAnswers;
@@ -85,14 +86,15 @@ public class StudentAnswerService {
         return studentAnswersRepository.saveAll(studentAnswersList);
     }
 
-    public ObjectMessageResponse<?> isStudentAnswerToTask(Long telegramId, Long taskId) {
+    public IsStudentAnswered<?> isStudentAnswerToTask(Long telegramId, Long taskId) {
         boolean isAnswered = customStudentAnswerRepository.existsByTask_IdAndStudent_TelegramId(taskId, telegramId);
         if(isAnswered) {
             StudentAnswers studentAnswers = studentAnswersRepository.findByStudent_TelegramIdAndTask_Id(telegramId, taskId);
             CustomStudentAnswer customStudentAnswer = studentAnswers.getCustomStudentAnswer();
-            return new ObjectMessageResponse<>("student answer: ", customStudentAnswer);
+            return new IsStudentAnswered<>(true, customStudentAnswer);
+
         }
-        return new ObjectMessageResponse<>("student didn't answered", null);
+        return new IsStudentAnswered<>(false, null);
     }
 
     public ResponseEntity<?> setStudentCustomAnswer(Long studentTelegramId, Long taskId, String studentAnswer) {

@@ -2,6 +2,7 @@ package com.server.math.controller;
 
 import com.server.math.dto.AssignedStudentTask;
 import com.server.math.dto.CountAssignedTasks;
+import com.server.math.dto.IsStudentAnswered;
 import com.server.math.dto.ObjectMessageResponse;
 import com.server.math.model.StudentAnswers;
 import com.server.math.service.StudentAnswerService;
@@ -51,7 +52,7 @@ public class StudentAnswerController {
     @GetMapping("/answer.isStudentAnswerToTask")
     private ResponseEntity<?> isStudentAnswerToTask(@RequestParam(name = "studentTelegramId") Long telegramId,
                                                     @RequestParam(name = "taskId") Long taskId) {
-        ObjectMessageResponse<?> objectMessageResponse = studentAnswerService.isStudentAnswerToTask(telegramId, taskId);
+        IsStudentAnswered<?> objectMessageResponse = studentAnswerService.isStudentAnswerToTask(telegramId, taskId);
         return new ResponseEntity<>(objectMessageResponse, HttpStatus.OK);
     }
 
