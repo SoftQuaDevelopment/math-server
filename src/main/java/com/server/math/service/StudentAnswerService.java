@@ -85,6 +85,16 @@ public class StudentAnswerService {
         return studentAnswersRepository.saveAll(studentAnswersList);
     }
 
+    public ObjectMessageResponse<?> isStudentAnswerToTask(Long telegramId, Long taskId) {
+        boolean isAnswered = customStudentAnswerRepository.existsByTask_IdAndStudent_TelegramId(taskId, telegramId);
+        if(isAnswered) {
+            StudentAnswers studentAnswers = studentAnswersRepository.findByStudent_TelegramIdAndTask_Id(telegramId, taskId);
+            CustomStudentAnswer customStudentAnswer = studentAnswers.getCustomStudentAnswer();
+            return new ObjectMessageResponse<>("student answer: ", customStudentAnswer);
+        }
+        return new ObjectMessageResponse<>("student didn't answered", null);
+    }
+
     public ResponseEntity<?> setStudentCustomAnswer(Long studentTelegramId, Long taskId, String studentAnswer) {
         Student student = studentRepository
                 .findByTelegramId(studentTelegramId)

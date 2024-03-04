@@ -48,6 +48,13 @@ public class StudentAnswerController {
         return studentAnswerService.setStudentCustomAnswer(studentTelegramId, taskId, customStudentAnswer);
     }
 
+    @GetMapping("/answer.isStudentAnswerToTask")
+    private ResponseEntity<?> isStudentAnswerToTask(@RequestParam(name = "studentTelegramId") Long telegramId,
+                                                    @RequestParam(name = "taskId") Long taskId) {
+        ObjectMessageResponse<?> objectMessageResponse = studentAnswerService.isStudentAnswerToTask(telegramId, taskId);
+        return new ResponseEntity<>(objectMessageResponse, HttpStatus.OK);
+    }
+
     @GetMapping("/answer.getStudentAnswersByTelegramId")
     private ResponseEntity<?> getStudentAnswersByTelegramId(@RequestParam(name = "studentTelegramId") Long studentTelegramId) {
         List<StudentAnswers> studentAnswersList = studentAnswerService.getStudentAnswerByTelegramId(studentTelegramId);
