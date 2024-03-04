@@ -45,8 +45,7 @@ public class StudentAnswerController {
     private ResponseEntity<?> setStudentCustomAnswer(@RequestParam(name = "studentTelegramId") Long studentTelegramId,
                                                      @RequestParam(name = "taskId") Long taskId,
                                                      @RequestParam(name = "CustomStudentAnswer") String customStudentAnswer) {
-        ObjectMessageResponse<?> messageResponse = studentAnswerService.setStudentCustomAnswer(studentTelegramId, taskId, customStudentAnswer);
-        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
+        return studentAnswerService.setStudentCustomAnswer(studentTelegramId, taskId, customStudentAnswer);
     }
 
     @GetMapping("/answer.getStudentAnswersByTelegramId")

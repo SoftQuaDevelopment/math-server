@@ -18,4 +18,9 @@ public interface CustomStudentAnswerRepository extends JpaRepository<CustomStude
     @Modifying
     @Query("delete from CustomStudentAnswer c where c.student = ?1")
     int deleteByStudent(Student student);
+
+    CustomStudentAnswer findByTask_IdAndStudent_TelegramId(Long id, Long telegramId);
+
+    @Query("select (count(c) > 0) from CustomStudentAnswer c where c.task.id = ?1 and c.student.telegramId = ?2")
+    boolean existsByTask_IdAndStudent_TelegramId(Long id, Long telegramId);
 }

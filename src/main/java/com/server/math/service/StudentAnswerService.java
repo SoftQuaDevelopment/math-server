@@ -10,6 +10,8 @@ import com.server.math.model.questions.Task;
 import com.server.math.repository.*;
 import com.server.math.utils.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -83,14 +85,21 @@ public class StudentAnswerService {
         return studentAnswersRepository.saveAll(studentAnswersList);
     }
 
-    public ObjectMessageResponse<?> setStudentCustomAnswer(Long studentTelegramId, Long taskId, String studentAnswer) {
+    public ResponseEntity<?> setStudentCustomAnswer(Long studentTelegramId, Long taskId, String studentAnswer) {
         Student student = studentRepository
                 .findByTelegramId(studentTelegramId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student does not exist!"));
 
-        if(student.isBan())
-            return new ObjectMessageResponse<>("A banned student cannot answer questions", "Student is banned");
+        if(student.isBan()) {
+            ObjectMessageResponse<?> response = new ObjectMessageResponse<>("A banned student cannot answer questions", "Student is banned");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
 
+        boolean isAnswerExist = customStudentAnswerRepository.existsByTask_IdAndStudent_TelegramId(taskId, studentTelegramId);
+        if(isAnswerExist) {
+            ObjectMessageResponse<?> response = new ObjectMessageResponse<>("You can't answer an already answered question", "Already answered");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
         Task task = taskRepository
                 .findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
@@ -104,7 +113,8 @@ public class StudentAnswerService {
         CustomStudentAnswer _answer = customStudentAnswerRepository.save(customAnswer);
 
         int updateCount = studentAnswersRepository.updateCustomStudentAnswerAndPointsByStudentAndTask(_answer, points, student, task);
-        return new ObjectMessageResponse<>("Update completed", updateCount);
+        ObjectMessageResponse<?> response = new ObjectMessageResponse<>("Update completed", updateCount);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private static CustomStudentAnswer getCustomStudentAnswer(String studentAnswer, Task task, Student student) {
