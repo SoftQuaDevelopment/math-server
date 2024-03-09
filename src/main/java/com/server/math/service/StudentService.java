@@ -77,7 +77,7 @@ public class StudentService {
                 .findByStudent_TelegramIdAndTask_Subject(telegramId, subject);
 
         return studentAnswers.stream()
-                .filter(studentAnswer -> Objects.equals(studentAnswer.getStudent().getId(), telegramId))
+                .filter(studentAnswer -> Objects.equals(studentAnswer.getStudent().getTelegramId(), telegramId))
                 .mapToInt(StudentAnswers::getPoints)
                 .sum();
     }
