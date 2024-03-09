@@ -116,6 +116,7 @@ public class StudentAnswerService {
                 .findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task does not exist!"));
 
+        studentAnswer = studentAnswer.toLowerCase().strip();
         CustomStudentAnswer customAnswer = getCustomStudentAnswer(studentAnswer, task, student);
         int points = 0;
         if (customAnswer.isCorrect()) {

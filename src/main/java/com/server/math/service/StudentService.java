@@ -86,7 +86,7 @@ public class StudentService {
         List<StudentAnswers> studentAnswers = studentAnswersRepository.findByStudent_TelegramId(telegramId);
 
         return studentAnswers.stream()
-                .filter( studentAnswer -> Objects.equals(studentAnswer.getStudent().getId(), telegramId))
+                .filter( studentAnswer -> Objects.equals(studentAnswer.getStudent().getTelegramId(), telegramId))
                 .mapToInt(StudentAnswers::getPoints)
                 .sum();
     }
