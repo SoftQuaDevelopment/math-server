@@ -6,9 +6,11 @@ import com.server.math.model.Student;
 import com.server.math.model.StudentAnswers;
 import com.server.math.repository.StudentAnswersRepository;
 import com.server.math.repository.StudentRepository;
+import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,31 +26,30 @@ public class LeadBoardService {
     public List<LeadBoard> getLeadBordBySubjectAndClassNumberAndClassLetter(int classNumber, String classLetter, Subject subject) {
         List<StudentAnswers> studentAnswersList = studentAnswersRepository.findByStudent_ClassNumberAndStudent_ClassLetterAndTask_IsQuizFalseAndTask_Subject(classNumber, classLetter, subject);
         List<Student> studentList = studentRepository.findByClassNumberAndClassLetter(classNumber, classLetter);
-        return getLeadBoards(studentAnswersList, studentList);
+        return getLeadBoards(studentAnswersList, studentList).stream().sorted(Comparator.comparing(LeadBoard::getPoints)).toList();
     }
 
     public List<LeadBoard> getLeadBoardByClassNumberAndClassLetter(int classNumber, String classLetter) {
         List<StudentAnswers> studentAnswersList = studentAnswersRepository.findByStudent_ClassNumberAndStudent_ClassLetterAndTask_IsQuizFalse(classNumber, classLetter);
         List<Student> studentList = studentRepository.findByClassNumberAndClassLetter(classNumber, classLetter);
-        return getLeadBoards(studentAnswersList, studentList);
+        return getLeadBoards(studentAnswersList, studentList).stream().sorted(Comparator.comparing(LeadBoard::getPoints)).toList();
     }
 
     public List<LeadBoard> getLeadBordBySubjectAndClassNumber(int classNumber, Subject subject) {
         List<StudentAnswers> studentAnswersList = studentAnswersRepository.findByStudent_ClassNumberAndTask_IsQuizFalseAndTask_Subject(classNumber, subject);
         List<Student> studentList = studentRepository.findByClassNumber(classNumber);
-        return getLeadBoards(studentAnswersList, studentList);
+        return getLeadBoards(studentAnswersList, studentList).stream().sorted(Comparator.comparing(LeadBoard::getPoints)).toList();
     }
 
     public List<LeadBoard> getLeadBoardByClassNumber(int classNumber) {
         List<StudentAnswers> studentAnswersList = studentAnswersRepository.findByStudent_ClassNumberAndTask_IsQuizFalse(classNumber);
         List<Student> studentList = studentRepository.findByClassNumber(classNumber);
-        return getLeadBoards(studentAnswersList, studentList);
+        return getLeadBoards(studentAnswersList, studentList).stream().sorted(Comparator.comparing(LeadBoard::getPoints)).toList();
     }
 
     private static List<LeadBoard> getLeadBoards(List<StudentAnswers> studentAnswersList, List<Student> studentList) {
         Map<Long, Integer> studentPointsMap = studentAnswersList.stream()
-                .collect(Collectors.groupingBy(studentAnswer -> studentAnswer.getStudent().getId(),
-                        Collectors.summingInt(StudentAnswers::getPoints)));
+                .collect(Collectors.groupingBy(studentAnswer -> studentAnswer.getStudent().getId(), Collectors.summingInt(StudentAnswers::getPoints)));
 
         return studentList.stream()
                 .map(student -> new LeadBoard(student, studentPointsMap.getOrDefault(student.getId(), 0)))
