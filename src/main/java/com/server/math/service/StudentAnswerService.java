@@ -136,7 +136,6 @@ public class StudentAnswerService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No correct answer found"));
 
-        System.out.println(correctAnswer);
         assert correctAnswer != null;
 
         CustomStudentAnswer customAnswer = new CustomStudentAnswer();
