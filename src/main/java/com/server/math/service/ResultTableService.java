@@ -1,10 +1,20 @@
 package com.server.math.service;
 
 
+import com.server.math.dto.LeadBoard;
+import com.server.math.dto.ResultTable;
+import com.server.math.dto.Subject;
+import com.server.math.model.Student;
+import com.server.math.model.StudentAnswers;
 import com.server.math.repository.StudentAnswersRepository;
 import com.server.math.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -15,55 +25,32 @@ public class ResultTableService {
     @Autowired
     private StudentRepository studentRepository;
 
-//    public Page<ResultTable> generateTable(int pageNumber, int pageSize) {
-//        Page<StudentAnswers> studentAnswersList = studentAnswersRepository.findAll(PageRequest.of(pageNumber, pageSize));
-//        List<Student> studentList = studentRepository.findAll();
-//
-//        List<Result> getPointsAndSubject = getPointsAndSubject(studentAnswersList, studentList);
-//
-//        List<ResultTable> resultTables = new ArrayList<>();
-//        for (Result result : getPointsAndSubject) {
-//            ResultTable resultTable = getResultTable(result);
-//            resultTables.add(resultTable);
-//        }
-//
-//        return new PageImpl<>(resultTables);
-//    }
+    public List<ResultTable> getResultBySubject(Subject subject) {
+        List<Student> students = studentRepository.findAll();
+        List<StudentAnswers> studentAnswers = studentAnswersRepository.findAll();
 
-//    private static ResultTable getResultTable(Result leadBoard) {
-//        Student student = leadBoard.getStudent();
-//        int points = leadBoard.getPoints();
-//        int mark = 0;
-//        Subject subject = leadBoard.getSubject();
-//
-//        if (Objects.equals(student.getClassLetter(), "Т")) {
-//            if (points >= 27) mark = 5;
-//            else if (points >= 17) mark = 4;
-//        } else {
-//            if (points >= 21) mark = 5;
-//            else if (points >= 14) mark = 4;
-//        }
-//
-//        return new ResultTable(student, subject, points, mark);
-//    }
-//
-//    private static List<Result> getPointsAndSubject(Page<StudentAnswers> studentAnswersList, List<Student> studentList) {
-//        return studentList.stream()
-//                .map(student -> {
-//                    int points = studentAnswersList.stream()
-//                            .filter(studentAnswer -> Objects.equals(student.getId(), studentAnswer.getStudent().getId()))
-//                            .mapToInt(StudentAnswers::getPoints)
-//                            .sum();
-//
-//
-//                    Subject subject = studentAnswersList.stream()
-//                            .filter(studentAnswer -> Objects.equals(student.getId(), studentAnswer.getStudent().getId()))
-//                            .map(StudentAnswers::getTask)
-//                            .map(Task::getSubject)
-//                            .findFirst()
-//                            .orElse(null);
-//
-//                    return new Result(student, subject, points);
-//                }).collect(Collectors.toList());
-//    }
+        return students.stream()
+                .map(student -> {
+                    int points = studentAnswers.stream()
+                            .filter(studentAnswer -> student.getId() == studentAnswer.getStudent().getId()
+                                    && studentAnswer.getTask().getSubject() == subject)
+                            .mapToInt(StudentAnswers::getPoints)
+                            .sum();
+
+                    int mark = calculateMark(student, points);
+
+                    return new ResultTable(student, subject, points, mark);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private int calculateMark(Student student, int points) {
+        if (student.getClassLetter().equals("Т")) {
+            return points >= 27 ? 5 : (points >= 17 ? 4 : 0);
+        } else {
+            return points >= 21 ? 5 : (points >= 14 ? 4 : 0);
+        }
+    }
+
+
 }
