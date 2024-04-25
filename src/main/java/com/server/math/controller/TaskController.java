@@ -1,5 +1,6 @@
 package com.server.math.controller;
 
+import com.server.math.dto.RandomTask;
 import com.server.math.dto.Subject;
 import com.server.math.model.questions.Task;
 import com.server.math.service.TaskService;
@@ -26,6 +27,12 @@ public class TaskController {
     private ResponseEntity<?> getTaskById(@RequestParam(name = "taskId") Long taskId) {
         Task task = taskService.getTaskById(taskId);
         return new ResponseEntity<>(task, HttpStatus.OK);
+    }
+
+    @GetMapping("/task.getRandom")
+    private ResponseEntity<?> getRandomTask(@RequestParam(name = "subject") Subject subject) {
+        RandomTask randomTask = taskService.getRandomTask(subject);
+        return new ResponseEntity<>(randomTask, HttpStatus.OK);
     }
 
     @GetMapping("/task.getByClassAndDate")

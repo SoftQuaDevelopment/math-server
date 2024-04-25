@@ -32,7 +32,7 @@ public class ResultTableService {
         return students.stream()
                 .map(student -> {
                     int points = studentAnswers.stream()
-                            .filter(studentAnswer -> student.getId() == studentAnswer.getStudent().getId()
+                            .filter(studentAnswer -> student.getId().equals(studentAnswer.getStudent().getId())
                                     && studentAnswer.getTask().getSubject() == subject)
                             .mapToInt(StudentAnswers::getPoints)
                             .sum();

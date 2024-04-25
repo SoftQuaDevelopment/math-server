@@ -22,4 +22,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByIsQuizTrueAndDay(Integer day);
 
     List<Task> findByIsQuizTrueAndSubjectAndClassNumberAndDay(Subject subject, Integer classNumber, Integer day);
+
+    List<Task> findByClassNumberAndDayAndSubjectAndIsQuiz(Integer classNumber, Integer day, Subject subject, boolean isQuiz);
 }
